@@ -1,0 +1,6 @@
+<% begin %>
+  <%= render_generative_ui tool_call.arguments, catalog: :default %>
+<% rescue GenerativeUI::InvalidComponentTreeError => e %>
+  <%# Invalid attempts stay hidden; subscribe to the notification below to log/report them. %>
+  <% ActiveSupport::Notifications.instrument('invalid_tree.generative_ui', error: e, tool_call: tool_call) %>
+<% end %>
