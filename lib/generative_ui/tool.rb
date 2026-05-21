@@ -19,12 +19,28 @@ module GenerativeUI
       <<~TEXT.strip
         Render inline UI from the available component catalog.
 
+        Call this tool at most once per assistant turn. After it returns
+        {"status":"ok"}, the UI is shown to the user — do not call it again.
+
         Arguments:
         - components is a flat array of component instances.
+        - Each component is an object: { "id": "...", "component": "<Name>", ...attributes }
+          where "component" is the literal component name as a string.
         - One component must have id="root".
         - ComponentId fields reference one component id.
         - ComponentIdList fields reference ordered arrays of component ids.
         - The accepted payload must form one rooted tree.
+
+        Example payload (component names below must be from the catalog;
+        ids are arbitrary labels — suffix them with numbers so they are
+        clearly distinct from component names):
+        {
+          "components": [
+            { "id": "root",    "component": "<CatalogComponent>", ...attributes },
+            { "id": "title-1", "component": "<CatalogComponent>", ...attributes },
+            { "id": "body-1",  "component": "<CatalogComponent>", ...attributes }
+          ]
+        }
 
         #{catalog.to_prompt}
       TEXT
