@@ -240,17 +240,21 @@ class CatalogTest < Minitest::Test
   # ---------------------------------------------------------------------------
 
   def test_redeclaring_component_replaces_previous_definition
-    catalog = Class.new(Catalog) do
-      component 'ReplaceableComponent' do
-        desc 'First declaration'
-        attributes { string :first_value }
-      end
+    catalog = nil
 
-      component 'ReplaceableComponent' do
-        desc 'Second declaration'
-        attributes { string :second_value }
-      end
-    end.new
+    assert_output(nil, %(GenerativeUI: component "ReplaceableComponent" was already declared; replacing previous declaration\n)) do
+      catalog = Class.new(Catalog) do
+        component 'ReplaceableComponent' do
+          desc 'First declaration'
+          attributes { string :first_value }
+        end
+
+        component 'ReplaceableComponent' do
+          desc 'Second declaration'
+          attributes { string :second_value }
+        end
+      end.new
+    end
 
     assert_equal ['ReplaceableComponent'], catalog.names
     assert_equal 'Second declaration', catalog.fetch('ReplaceableComponent').description_text
